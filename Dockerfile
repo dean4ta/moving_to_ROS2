@@ -4,32 +4,10 @@ SHELL ["/bin/bash","-c"]
 # set environments
 ENV ROS2_DISTRO eloquent
 
-# install remaining desktop packages
-RUN apt update && apt install -y \
-    ros-eloquent-desktop \
-    && rm -rf /var/lib/apt/lists/*
-
-# install ros2 packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-${ROS2_DISTRO}-ros1-bridge \
-    ros-${ROS2_DISTRO}-demo-nodes-cpp \
-    ros-${ROS2_DISTRO}-demo-nodes-py \
-    ros-${ROS2_DISTRO}-test-msgs \
-    && rm -rf /var/lib/apt/lists/*
-
 # install building dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
-
-# install building dependencies
-# RUN apt-get update && apt-get install -y \
-#     python3-rosdep \
-#     python3-rosinstall \
-#     python3-rosinstall-generator \
-#     python3-wstool \
-#     build-essential \
-#     && rm -rf /var/lib/apt/lists/*
 
 # Setup Locales
 RUN apt-get update && apt-get install -y locales
@@ -83,7 +61,6 @@ RUN source /opt/ros/${ROS2_DISTRO}/setup.bash \
 RUN source /opt/ros/${ROS2_DISTRO}/setup.bash \
     # Build workspace
     && colcon build --symlink-install
-RUN echo "source /root/ros_ws/install/setup.bash" >> ~/.bashrc
 
 COPY ./ros-entrypoint.sh /
 ENTRYPOINT ["/ros-entrypoint.sh"]
