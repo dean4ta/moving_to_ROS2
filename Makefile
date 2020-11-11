@@ -7,10 +7,10 @@ SOURCE_MOUNT:=/root/ros_ws/src/
 JOYSTICK_DEVICE := /dev/input/js0
 JOYSTICK_FLAGS := --device $(JOYSTICK_DEVICE):$(JOYSTICK_DEVICE) \
 
-USE_GPU := yes
+USE_GPU := false
 GPU_FLAGS := --gpus=all
 
-FORWARD_X := yes
+FORWARD_X := false
 XAUTH := /tmp/.docker.xauth
 DISPLAY_FORWARDING_FLAGS := --env="DISPLAY" \
 	--env="QT_X11_NO_MITSHM=1" \
@@ -36,7 +36,8 @@ up: ## Launch the container
 	@$(DOCKER_RUN)
 
 .PHONY: up-display
-up-display: FORWARD_X := yes
+up-display: FORWARD_X := true
+up-display: USE_GPU := true
 up-display: ## Laucnh the container and forward the X display
 	@xhost +local:root
 	@xauth nlist :0 | sed -e 's/^..../ffff/' | xauth -f $(XAUTH) nmerge -
