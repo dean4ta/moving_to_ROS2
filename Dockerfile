@@ -1,8 +1,8 @@
-FROM ros:eloquent-ros1-bridge-bionic
+FROM ros:foxy-ros1-bridge
 SHELL ["/bin/bash","-c"] 
 
 # set environments
-ENV ROS2_DISTRO eloquent
+ENV ROS2_DISTRO foxy
 
 # install building dependencies
 RUN apt-get update && apt-get install -y \
@@ -45,6 +45,8 @@ RUN apt-get update && apt-get install -y \
     htop \
     unzip \
     && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    ros-${ROS2_DISTRO}-turtlesim
 
 # create ros directories
 ENV ROS_WS=/root/ros_ws
