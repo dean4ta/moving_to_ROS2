@@ -4,6 +4,9 @@ VERSION := 0.1.0
 CONTAINER := ros2_demo$(VERSION)
 SOURCE_MOUNT:=/root/ros_ws/src/
 
+JOYSTICK_DEVICE := /dev/input/js0
+JOYSTICK_FLAGS := --device $(JOYSTICK_DEVICE):$(JOYSTICK_DEVICE) \
+
 USE_GPU := false
 GPU_FLAGS := --gpus=all
 
