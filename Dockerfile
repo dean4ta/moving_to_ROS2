@@ -3,6 +3,7 @@ SHELL ["/bin/bash","-c"]
 
 # set environments
 ENV ROS2_DISTRO foxy
+ENV ROS1_DISTRO noetic
 
 # install building dependencies
 RUN apt-get update && apt-get install -y \
@@ -47,22 +48,29 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install -y \
     ros-${ROS2_DISTRO}-turtlesim
+RUN apt-get update && apt-get install -y \
+    ros-${ROS2_DISTRO}-gazebo-ros-pkgs
 
 # create ros directories
-ENV ROS_WS=/root/ros_ws
-WORKDIR ${ROS_WS}/src
-COPY . ${ROS_WS}/src
+ENV COLCON_WS=/root/colcon_ws
+WORKDIR ${COLCON_WS}/src
+COPY . ${COLCON_WS}/src
 
-WORKDIR $ROS_WS
+WORKDIR $COLCON_WS
 ENV DEBIAN_FRONTEND noninteractive
 RUN source /opt/ros/${ROS2_DISTRO}/setup.bash \
     && apt-get update \
     # Install dependencies
     && rosdep install -y --from-paths . --ignore-src -r --rosdistro ${ROS2_DISTRO}
 
-RUN source /opt/ros/${ROS2_DISTRO}/setup.bash \
+RUN source /opt/ros/${ROS2_DISTRO}/setup.bash && \
     # Build workspace
-    && colcon build --symlink-install
+    colcon build --symlink-install --packages-skip ros1_bridge && \
+    source /opt/ros/${ROS1_DISTRO}/setup.bash && \
+    source /opt/ros/${ROS2_DISTRO}/setup.bash && \
+    MAKEFLAGS=-j37 && \
+    colcon build --symlink-install --packages-select ros1_bridge --cmake-force-configure
+
 
 COPY ./ros-entrypoint.sh /
 ENTRYPOINT ["/ros-entrypoint.sh"]

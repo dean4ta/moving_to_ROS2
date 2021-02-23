@@ -1,2 +1,0 @@
-ros__parameters:
-  sensor_data_location : /root/ros_ws/src/odom_handler/command_logs/sensor_data.dat
